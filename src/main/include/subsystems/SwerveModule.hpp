@@ -4,54 +4,54 @@
 
 #include <ctre/phoenix6/CANcoder.hpp>
 #include <ctre/phoenix6/TalonFX.hpp>
-#include <frc/controller/SimpleMotorFeedforward.h>
 #include <frc/geometry/Rotation2d.h>
-#include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/simulation/SimDeviceSim.h>
 #include <frc/DataLogManager.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <frc2/command/SubsystemBase.h>
 #include <wpi/DataLog.h>
+#include <ctre/phoenix6/CANcoder.hpp>
+#include <ctre/phoenix6/TalonFX.hpp>
 
 #include "Constants.h"
 
+
+/**
+ * @brief Outlines the structure for a single Swerve Module
+ * 
+ * It is one component of a swerve drive. Consists of an absolute encoder
+ * attached to the shaft of the wheel, a motor that provides the wheel power (drive motor),
+ * and a motor that changes the direction the wheel is pointing (steer motor)
+ */
 class SwerveModule
 {
 public:
-  SwerveModule(int driveMotorId, int steerMotorId, int steerEncoderId,
-               frc::Rotation2d angleOffset, ctre::phoenix6::CANBus _canBus);
+  /**
+   * @brief Main Constructor
+   * 
+   * @param module_id The ID of the Swerve Module. Should be unique among all swerve modules
+   */
+  SwerveModule(uint8_t module_id,
+               ctre::phoenix6::hardware::TalonFX *drive_motor,
+               ctre::phoenix6::hardware::TalonFX *steer_motor,
+               ctre::phoenix6::hardware::CANcoder *steer_encoder,
+               double angle_offset);
 
   frc::SwerveModuleState GetCurrentState();
-  frc::SwerveModulePosition GetPosition();
   void SetDesiredState(frc::SwerveModuleState desiredState);
   void ResetDriveEncoders();
-  void InitEncoder(int encoderID);
-  frc::Rotation2d GetRotation();
-  frc::Rotation2d GetAbsoluteRotation();
-  void SetOffset(frc::Rotation2d);
+  void SetEncoderZero();
   void Reset();
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  int m_id;
+  uint8_t m_id;
 
-  ctre::phoenix6::hardware::TalonFX m_driveMotor;
-  ctre::phoenix6::hardware::TalonFX m_steerMotor;
-  ctre::phoenix6::hardware::CANcoder m_steerEncoder;
+  double m_angleOffset;
 
-  frc::Rotation2d m_angleOffset;
-
-  // simulation fields
-  frc::Timer m_simTimer;
-
-  frc::sim::SimDeviceSim m_driveSim;
-  frc::sim::SimDeviceSim m_steerSim;
-
-  double m_driveSimVelocity;
-  double m_driveSimPosition;
-  double m_steerSimPosition;
+  ctre::phoenix6::hardware::TalonFX *m_driveMotor;
+  ctre::phoenix6::hardware::TalonFX *m_steerMotor;
+  ctre::phoenix6::hardware::CANcoder *m_steerEncoder;
 
   wpi::log::DoubleLogEntry m_driveMotorCurrentLog;
   wpi::log::DoubleLogEntry m_driveMotorVoltageLog;

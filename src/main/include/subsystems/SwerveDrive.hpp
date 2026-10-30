@@ -16,6 +16,7 @@
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/controller/PIDController.h>
 #include <networktables/NetworkTableInstance.h>
+#include <frc2/command/SubsystemBase.h>
 
 #include "Constants.h"
 #include "SwerveModule.hpp"
